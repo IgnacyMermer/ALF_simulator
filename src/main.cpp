@@ -37,30 +37,22 @@ void registerCustomRpc(string alf_name)
 
 int main(int argc, char **argv)
 {
-    // parse commandline arguments
+
+    int STATUS=1;
+
+
     AlfSimulatorConfig cfg(argc, argv);
     config = &cfg;
 
-    //QCoreApplication a(argc, argv);
-    //a.exec();
-
     FITConnection::initialize("172.20.75.180", 0, 50001);
 
-    // Uzyskanie dostępu do target
     IPbusTarget& target = FITConnection::getTarget();
 
-    // Przykład użycia target w mainie
     target.checkStatus();
 
-    // Tworzenie pakietu kontrolnego
     IPbusControlPacket packet;
 
 
-
-    //connect(&p, &IPbusControlPacket::error, this, &IPbusTarget::error);
-    //foreach(regblock b, TCM.act.regblocks) p.addTransaction(read, b.addr, TCM.act.registers + b.addr, b.size());
-
-    // check if required environmental variable is set
     if (!std::getenv("DIM_DNS_NODE"))
     {
         PrintError("Environment variable \"DIM_DNS_NODE\" not set!");
@@ -86,7 +78,6 @@ int main(int argc, char **argv)
         "LLA_SESSION_START",
         "LLA_SESSION_STOP",
         "RESET_CARD" // CRORC Card RPC 
-
     };
     /// list of created topics
     vector<std::shared_ptr<RpcEcho>> topics;
@@ -157,6 +148,8 @@ int main(int argc, char **argv)
             
         }
     }
+
+    DimService statusService("ALF_42/WORK_STATUS",STATUS);
 
     registerCustomRpc(alf_name);
     // start DIM server

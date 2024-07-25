@@ -5,9 +5,7 @@ project(AlfSimulator)
 include_directories(include/AlfSimulator include)
 include_directories(include/custom include)
 
-#find_package(Qt5 REQUIRED COMPONENTS Core Network)
-
-find_package(Boost REQUIRED COMPONENTS system thread)
+find_package(Boost 1.65.0 REQUIRED COMPONENTS system thread)
 
 include_directories(include/DimRpcParallel include ${Boost_INCLUDE_DIRS})
 link_directories(lib)
@@ -23,6 +21,5 @@ file(GLOB_RECURSE SOURCES "src/*.cpp"
 
 add_executable(AlfSimulator ${SOURCES})
 
-#target_link_libraries(AlfSimulator Qt5::Core Qt5::Network)
 target_link_libraries(AlfSimulator libdim.a libpthread.so ${Boost_LIBRARIES})
 

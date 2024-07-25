@@ -4,8 +4,8 @@
 #define FITCONNECTION_H
 
 #include "IPbusInterface.h"
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
+//#include <boost/asio.hpp>
+//#include <boost/bind.hpp>
 #include "IPbusControlPacket.h"
 #include <memory>
 #include <chrono>

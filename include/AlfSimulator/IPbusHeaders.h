@@ -20,6 +20,7 @@
 #include<cstring>
 #include<string>
 #include <climits>
+#include <iostream>
 
 template <typename T>
 T swap_endian(T u)

@@ -4,6 +4,7 @@
 #include "TCM.h"
 //#include "IPbusInterface.h"
 #include "FITConnection.h"
+#include <bitset>
 
 #define SIZE 2
 
@@ -64,37 +65,49 @@ string RpcEcho::handleRequest(string request)
     {
         vector<string> lines = Utility::splitString(request, "\n");
 
-
-        TCMAddresses tcmAddresses;
-        std::map<std::string, int32_t>& tcmMap = tcmAddresses.TCMAddressesMap;
-        std::cout<<std::to_string(tcmMap[rpcName]);
-
-        
-        IPbusControlPacket packet;
-
-        uint32_t data[SIZE] = {0x0,0x0};
-        packet.addTransaction(TransactionType::ipread, tcmMap[rpcName], data, SIZE);
-        IPbusTarget& target = FITConnection::getTarget();
-        //FITConnection::target->transcieve(packet);
-        target.transcieve(packet);
-
-        std::cout << std::hex << data[0] << ' ' << std::hex << data[1] << std::endl;
-
-
-
-
-        for (size_t i = 0; i < lines.size(); i++)
-        {
+        for (size_t i = 0; i < lines.size(); i++){
             string responseLine;
             std::cout<<(lines[i]);
             if (Utility::isComment(lines[i])) 
                 continue;
             else if (lines[i] == "reset")
                 responseLine = "success";
+            else if (lines[i].find("write") != string::npos){
+                TCMAddresses tcmAddresses;
+                IPbusControlPacket packet;
+
+                uint32_t data[SIZE] = {0x0,0x0};
+                std::map<std::string, int32_t>& tcmMap = tcmAddresses.TCMAddressesMap;
+                std::cout<<std::to_string(tcmMap[rpcName]);
+                data[0] = 0x24b1;
+                packet.addTransaction(TransactionType::ipwrite, tcmMap[rpcName], data, SIZE);
+                IPbusTarget& target = FITConnection::getTarget();
+                target.transcieve(packet);
+                
+                packet.addTransaction(TransactionType::ipread, tcmMap[rpcName], data, SIZE);
+                //IPbusTarget& target = FITConnection::getTarget();
+                target.transcieve(packet);
+
+                std::cout << std::bitset<32>(data[0]) /*<< ' ' << std::bitset<16>(data[1]) << ' ' << std::bitset<16>(data[2]) << ' ' << std::bitset<16>(data[3])*/ << std::endl;
+                responseLine = "0x" + /*Utility::randomString(SWT_HIGH_WIDTH)*/toHexString(data[0]);
+            }
             else if (lines[i].find(",write") != string::npos)
                 responseLine = "0";
-            else if (lines[i].find("read") != string::npos)
+            else if (lines[i].find("read") != string::npos){
+                TCMAddresses tcmAddresses;
+                std::map<std::string, int32_t>& tcmMap = tcmAddresses.TCMAddressesMap;
+                std::cout<<std::to_string(tcmMap[rpcName]);
+                
+                IPbusControlPacket packet;
+
+                uint32_t data[SIZE] = {0x0,0x0};
+                packet.addTransaction(TransactionType::ipread, tcmMap[rpcName], data, SIZE);
+                IPbusTarget& target = FITConnection::getTarget();
+                target.transcieve(packet);
+
+                std::cout << std::bitset<32>(data[0]) /*<< ' ' << std::bitset<16>(data[1]) << ' ' << std::bitset<16>(data[2]) << ' ' << std::bitset<16>(data[3])*/ << std::endl;
                 responseLine = "0x" + /*Utility::randomString(SWT_HIGH_WIDTH)*/toHexString(data[0]);
+            }
             else if (lines[i].find("wait") != string::npos)
             {
                 if (lines[i].find(",") == string::npos)

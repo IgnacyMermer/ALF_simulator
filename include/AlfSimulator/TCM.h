@@ -29,7 +29,9 @@ struct TypeTCM {
 
 struct TCMAddresses {
     std::map<std::string, int32_t> TCMAddressesMap = {
-        {"ALF_42/SERIAL_4/LINK_4/SWT_SEQUENCE", 0x0005}
+        {"ALF_42/SERIAL_4/LINK_4/SWT_SEQUENCE", /*0x006A*//*0x00E8*/0x00E9},
+        {"ALF_42/SERIAL_4/LINK_5/SWT_SEQUENCE", /*0x006A*/0x00E8},
+        {"ALF_42/SERIAL_4/LINK_6/SWT_SEQUENCE", /*0x0003*/0x00E8}
     };
 };
 

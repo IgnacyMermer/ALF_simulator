@@ -23,6 +23,7 @@ class RpcEcho : public DimRpcParallel
         string request, response;
 
         request = getString();
+        PrintVerbose(string("RPC handler\n"));
         PrintVerbose(string("RPC request received at " + rpcName + ":\n") + request);
 
         std::map<std::string, int32_t> myMap = {
