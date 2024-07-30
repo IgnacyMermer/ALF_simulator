@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include "./Parameter.h"
 #include <cstdint>
+#include <array>
 //#include "FITboardsCommon.h"
 
 const double LHCclock_MHz = 40.0789658; //reference value
@@ -28,10 +29,16 @@ struct TypeTCM {
 };
 
 struct TCMAddresses {
-    std::map<std::string, int32_t> TCMAddressesMap = {
-        {"ALF_42/SERIAL_4/LINK_4/SWT_SEQUENCE", /*0x006A*//*0x00E8*/0x00E9},
-        {"ALF_42/SERIAL_4/LINK_5/SWT_SEQUENCE", /*0x006A*/0x00E8},
-        {"ALF_42/SERIAL_4/LINK_6/SWT_SEQUENCE", /*0x0003*/0x00E8}
+    // {address from FRED in SWT, {address in FIT electronics for IPbus, write can./ be proceed}}
+    std::map<std::string, std::array<int32_t, 2>> TCMAddressesMap = {
+        {"111222", {0x006A, 1}}, //triggers
+        {"111333", {0x00E8, 0}}, //status bits
+        {"111000", {0x000F, 0}}, //board status
+        {"100000", {-1,     0}}, //return 1 if alf server is running
+        {"111444", {0x0000, 0}}, //delay A
+        {"111555", {0x0001, 0}}, //delay C
+        {"111666", {0x0002, 0}}, //delay laser
+        {"111777", {0x0005, 0}} //board temperature
     };
 };
 

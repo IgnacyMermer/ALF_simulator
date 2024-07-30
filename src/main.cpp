@@ -38,7 +38,7 @@ void registerCustomRpc(string alf_name)
 int main(int argc, char **argv)
 {
 
-    int STATUS=1;
+    short STATUS=1;
 
 
     AlfSimulatorConfig cfg(argc, argv);

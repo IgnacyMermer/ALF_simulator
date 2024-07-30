@@ -52,20 +52,20 @@ public:
 
 
     void addTransaction(TransactionType type, uint32_t address, uint32_t *data, uint8_t nWords = 1) {
-        std::cout<<"in add transaction\n";
-        std::cout<<std::to_string(*data);
-        std::cout<<"\n";
+        //std::cout<<"in add transaction\n";
+        //std::cout<<std::to_string(*data);
+        //std::cout<<"\n";
         Transaction currentTransaction;
         request[requestSize] = TransactionHeader(type, nWords, transactionsList.size());
         currentTransaction.requestHeader = (TransactionHeader *)(request + requestSize++);
         request[requestSize] = address;
         currentTransaction.address = request + requestSize++;
-        std::cout<<"\n";
-        std::cout<<std::to_string(*(response + responseSize));
-        std::cout<<"\n";
+        //std::cout<<"\n";
+        //std::cout<<std::to_string(*(response + responseSize));
+        //std::cout<<"\n";
         currentTransaction.responseHeader = (TransactionHeader *)(response + responseSize++);
-        std::cout<<std::to_string(currentTransaction.responseHeader->InfoCode);
-        std::cout<<"before switch\n";
+        //std::cout<<std::to_string(currentTransaction.responseHeader->InfoCode);
+        //std::cout<<"before switch\n";
         switch (type) {
             case                ipread:
             case nonIncrementingRead:
@@ -91,7 +91,7 @@ public:
             default:
                 debugPrint("unknown transaction type");
         }
-        std::cout<<std::to_string(currentTransaction.responseHeader->InfoCode);
+        //std::cout<<std::to_string(currentTransaction.responseHeader->InfoCode);
         if (requestSize > maxPacket || responseSize > maxPacket) {
             debugPrint("packet size exceeded");
             return;
@@ -123,11 +123,8 @@ public:
  * @return `true` is returned if all transactions were successful, otherwise `false` is returned
 */
     bool processResponse() { 
-        std::cout<<("process response");
         for (uint16_t i=0; i<transactionsList.size(); ++i) {
-            std::cout<<std::to_string(transactionsList.at(i).responseHeader->InfoCode);
             TransactionHeader *th = transactionsList.at(i).responseHeader;
-            std::cout<<std::to_string(th->InfoCode);
             if (th->ProtocolVersion != 2 || th->TransactionID != i || th->TypeID != transactionsList.at(i).requestHeader->TypeID) {
                 std::string message = "unexpected transaction header: " + std::to_string(*th) + ", expected: " + std::to_string(*transactionsList.at(i).requestHeader & 0xFFFFFFF0);
                 debugPrint(message);
@@ -172,7 +169,7 @@ public:
             }
             if (th->InfoCode != 0) {
                 std::string message = th->infoCodeString() + ", address: " + std::to_string(*transactionsList.at(i).address + th->Words);
-                debugPrint(message);
+                //debugPrint(message);
                 return false;
             }
         }

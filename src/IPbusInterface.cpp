@@ -56,10 +56,10 @@ bool IPbusTarget::reopen()
 
 size_t IPbusTarget::sync_recv(char* dest_buffer, size_t max_size) {
     try {
-        std::cerr << "Synchronized receiving..." << std::endl;
+        //std::cerr << "Synchronized receiving..." << std::endl;
         size_t bytes_transferred = m_socket.receive_from(boost::asio::buffer(m_buffer, IO_BUFFER_SIZE), m_remote_endpoint);
-        std::cout << "Message received: " << bytes_transferred << " bytes" << std::endl;
-        std::cout<<std::string(m_buffer);
+        //std::cout << "Message received: " << bytes_transferred << " bytes" << std::endl;
+        //std::cout<<std::string(m_buffer);
         std::memcpy(dest_buffer, m_buffer, bytes_transferred);
         return bytes_transferred;
     } catch (const boost::system::system_error& e) {
@@ -94,10 +94,7 @@ bool IPbusTarget::checkStatus()
     }
 }
 
-bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcessed)
-{
-    std::cout<<"transcieve\n";
-    std::cout<<std::to_string(p.transactionsList[0].responseHeader->InfoCode); 
+bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcessed){
     if(is_available == false) return false;
     if(p.requestSize <= 1)
     {
@@ -107,9 +104,6 @@ bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcess
     std::lock_guard<std::mutex> m_lock(m_transcieve_mutex);
 
     size_t send_bytes =  0;
-
-    std::cout<<"Nr1\n";
-    std::cout<<std::to_string(p.transactionsList[0].responseHeader->InfoCode);
 
     try
     {
@@ -121,9 +115,6 @@ bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcess
         return false;
     }
 
-    std::cout<<"Nr2\n";
-    std::cout<<std::to_string(p.transactionsList[0].responseHeader->InfoCode);
-
     if(send_bytes < p.requestSize*wordSize)
     {
         std::cerr << "Sending packer faild: " << send_bytes << " bytes was send instead of " << p.requestSize*wordSize << std::endl;
@@ -131,9 +122,6 @@ bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcess
     }
 
     size_t bytes_recevied  = sync_recv((char*)&p.response, p.requestSize*wordSize);
-
-    std::cout<<"Nr3\n";
-    std::cout<<std::to_string(p.transactionsList[0].responseHeader->InfoCode);
 
     if(bytes_recevied == 64 && p.response[0] == m_status.header)
     {
@@ -150,8 +138,6 @@ bool IPbusTarget::transcieve(IPbusControlPacket &p, bool shouldResponseBeProcess
             return false;
     } else {
             p.responseSize = uint16_t(bytes_recevied / wordSize); //response can be shorter then expected if a transaction wasn't successful
-            std::cout<<"before process\n";
-            std::cout<<std::to_string(p.transactionsList[0].responseHeader->InfoCode); 
             bool result = shouldResponseBeProcessed ? p.processResponse() : true;
             p.reset();
             return result;
